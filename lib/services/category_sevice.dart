@@ -13,8 +13,6 @@ class CategoryService {
 
   // create data
   saveCategory(Category category) async {
-    // debugPrint("cServices : ${category.name}, ${category.description}");
-    // debugPrint("cServices2----- : ${category.categoryMap()}");
     return await _repository.insertTable("categories", category.categoryMap());
   }
 

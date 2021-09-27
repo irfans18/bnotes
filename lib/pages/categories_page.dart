@@ -30,6 +30,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   getAllCategories() async {
+    _categoryList.clear();
     var categories = await _categoryService.readCategory();
     categories.forEach((category) {
       setState(() {
@@ -77,8 +78,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
                         var result = await _categoryService.saveCategory(_category);
                         if (result > 0) {
-                          debugPrint(result);  
+                          // debugPrint(result);  
                           Navigator.pop(context);
+                          getAllCategories();
                         }
                   }),
             ],
@@ -126,18 +128,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   style: TextButton.styleFrom(
                     primary: Colors.white, backgroundColor: Colors.blue),
                     onPressed: () async {
-                      debugPrint("TEST");
+                      // debugPrint("TEST");
                       _category.id = category[0]["id"];
                       _category.name = _editCategoryNameController.text.toString();
                       _category.description = _editCategoryDescriptionController.text.toString();
-                      debugPrint(_category.id.toString());  
+                      // debugPrint(_category.id.toString());  
 
                       var result = await _categoryService.updateCategory(_category);
 
                       if (result > 0) {
-                        debugPrint(result);  
+                      //   debugPrint(result);  
                         Navigator.pop(context);
+                        _showSnackBarMessage(Text("Category was updated!"));
+                        getAllCategories();
                       }
+
                   }),
             ],
             content: SingleChildScrollView(
@@ -164,6 +169,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
         });
   }
 
+  _showSnackBarMessage(message) {
+    var snackBar = SnackBar(content: message);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,28 +188,30 @@ class _CategoriesPageState extends State<CategoriesPage> {
           title: Text("Categories"),
         ),
         body: ListView.builder(
-            itemCount: _categoryList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  leading: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        _editCategory(context, _categoryList[index].id);
-                      }),
-                  title: Row(children: <Widget>[
-                    Text(_categoryList[index].name.toString()),
-                    IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {})
-                  ]),
-                ),
-              );
-            }),
+          itemCount: _categoryList.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                leading: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    _editCategory(context, _categoryList[index].id);
+                  }),
+                title: Row(children: <Widget>[
+                  Text(_categoryList[index].name.toString()),
+                  IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {})
+                ]),
+              ),
+            );
+          }),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              _addFormDialog(context);
-            }));
+          child: Icon(Icons.add),
+          onPressed: () {
+            _addFormDialog(context);
+          }
+        )
+    );
   }
 }
