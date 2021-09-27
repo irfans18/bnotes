@@ -43,10 +43,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   _editCategory(BuildContext context, categoryId) async {
-     category = await _categoryService.readCategoryById(categoryId);
+    category = await _categoryService.readCategoryById(categoryId);
     setState(() {
       _editCategoryNameController.text = category[0]["name"] ?? "No Name";
-      _editCategoryDescriptionController.text = category[0]["description"] ?? "No Description";
+      _editCategoryDescriptionController.text =
+          category[0]["description"] ?? "No Description";
     });
     _editFormDialog(context);
   }
@@ -69,15 +70,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
               TextButton(
                   child: Text("Save"),
                   style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.blue),
-                  onPressed: () async {
-                    _category.name = _addCategoryNameController.text.toString();
-                    _category.description = _addCategoryDescriptionController.text.toString();
+                    primary: Colors.white, backgroundColor: Colors.blue),
+                      onPressed: () async {
+                        _category.name = _addCategoryNameController.text.toString();
+                        _category.description = _addCategoryDescriptionController.text.toString();
 
-                    var result = await _categoryService.saveCategory(_category);
-
-                    debugPrint(
-                        "debugPrint ${_category.name} - ${_category.description} .$result");
+                        var result = await _categoryService.saveCategory(_category);
+                        if (result > 0) {
+                          debugPrint(result);  
+                          Navigator.pop(context);
+                        }
                   }),
             ],
             content: SingleChildScrollView(
@@ -120,17 +122,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     Navigator.pop(context);
                   }),
               TextButton(
-                  child: Text("Save"),
+                  child: Text("Update"),
                   style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.blue),
-                  onPressed: () async {
-                    _category.name = _addCategoryNameController.text.toString();
-                    _category.description = _addCategoryDescriptionController.text.toString();
+                    primary: Colors.white, backgroundColor: Colors.blue),
+                    onPressed: () async {
+                      debugPrint("TEST");
+                      _category.id = category[0]["id"];
+                      _category.name = _editCategoryNameController.text.toString();
+                      _category.description = _editCategoryDescriptionController.text.toString();
+                      debugPrint(_category.id.toString());  
 
-                    var result = await _categoryService.updateCategory(_category);
+                      var result = await _categoryService.updateCategory(_category);
 
-                    debugPrint(
-                        "debugPrint ${_category.name} - ${_category.description} .$result");
+                      if (result > 0) {
+                        debugPrint(result);  
+                        Navigator.pop(context);
+                      }
                   }),
             ],
             content: SingleChildScrollView(
@@ -160,7 +167,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           leading: TextButton(
               child: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => {
@@ -174,10 +181,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
             itemBuilder: (context, index) {
               return Card(
                 child: ListTile(
-                  leading: IconButton(icon: Icon(Icons.edit), onPressed: () {
-                    _editCategory(context, _categoryList[index].id);
-
-                  }),
+                  leading: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        _editCategory(context, _categoryList[index].id);
+                      }),
                   title: Row(children: <Widget>[
                     Text(_categoryList[index].name.toString()),
                     IconButton(
@@ -191,7 +199,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
             child: Icon(Icons.add),
             onPressed: () {
               _addFormDialog(context);
-        })
-    );
+            }));
   }
 }

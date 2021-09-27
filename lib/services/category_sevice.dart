@@ -1,12 +1,13 @@
 // @@ -0,0 +1,31 @@
 import 'package:bnotes/models/category.dart';
 import 'package:bnotes/repo/repository.dart';
+import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 
-class CategoryService{
+class CategoryService {
   late Repository _repository;
 
-  CategoryService(){
+  CategoryService() {
     _repository = Repository();
   }
 
@@ -27,6 +28,7 @@ class CategoryService{
   }
 
   updateCategory(Category category) async {
+    debugPrint("CS : ${category.categoryMap()} ");
     return await _repository.updateData("categories", category.categoryMap());
-  }  
+  }
 }
