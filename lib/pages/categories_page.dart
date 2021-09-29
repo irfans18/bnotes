@@ -62,27 +62,28 @@ class _CategoriesPageState extends State<CategoriesPage> {
             title: Text("Add Category"),
             actions: <Widget>[
               TextButton(
-                  child: Text("Cancel"),
-                  style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.red),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
+                child: Text("Cancel"),
+                style: TextButton.styleFrom(
+                  primary: Colors.grey),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
               TextButton(
-                  child: Text("Save"),
-                  style: TextButton.styleFrom(
+                child: Text("Save"),
+                style: TextButton.styleFrom(
                     primary: Colors.white, backgroundColor: Colors.blue),
-                      onPressed: () async {
-                        _category.name = _addCategoryNameController.text.toString();
-                        _category.description = _addCategoryDescriptionController.text.toString();
+                onPressed: () async {
+                  _category.name = _addCategoryNameController.text.toString();
+                  _category.description =
+                      _addCategoryDescriptionController.text.toString();
 
-                        var result = await _categoryService.saveCategory(_category);
-                        if (result > 0) {
-                          // debugPrint(result);  
-                          Navigator.pop(context);
-                          getAllCategories();
-                        }
-                  }),
+                  var result = await _categoryService.saveCategory(_category);
+                  if (result > 0) {
+                    // debugPrint(result);
+                    Navigator.pop(context);
+                    getAllCategories();
+                  }
+                }),
             ],
             content: SingleChildScrollView(
               child: Column(
@@ -117,33 +118,35 @@ class _CategoriesPageState extends State<CategoriesPage> {
             title: Text("Edit Category"),
             actions: <Widget>[
               TextButton(
-                  child: Text("Cancel"),
-                  style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.red),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
+                child: Text("Cancel"),
+                style: TextButton.styleFrom(
+                  primary: Colors.grey),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
               TextButton(
-                  child: Text("Update"),
-                  style: TextButton.styleFrom(
+                child: Text("Update"),
+                style: TextButton.styleFrom(
                     primary: Colors.white, backgroundColor: Colors.blue),
-                    onPressed: () async {
-                      // debugPrint("TEST");
-                      _category.id = category[0]["id"];
-                      _category.name = _editCategoryNameController.text.toString();
-                      _category.description = _editCategoryDescriptionController.text.toString();
-                      // debugPrint(_category.id.toString());  
+                onPressed: () async {
+                  // debugPrint("TEST");
+                  _category.id = category[0]["id"];
+                  _category.name =
+                      _editCategoryNameController.text.toString();
+                  _category.description =
+                      _editCategoryDescriptionController.text.toString();
+                  // debugPrint(_category.id.toString());
 
-                      var result = await _categoryService.updateCategory(_category);
+                  var result =
+                      await _categoryService.updateCategory(_category);
 
-                      if (result > 0) {
-                      //   debugPrint(result);  
-                        Navigator.pop(context);
-                        _showSnackBarMessage(Text("Category was updated!"));
-                        getAllCategories();
-                      }
-
-                  }),
+                  if (result > 0) {
+                    //   debugPrint(result);
+                    Navigator.pop(context);
+                    _showSnackBarMessage(Text("Category was updated!"));
+                    getAllCategories();
+                  }
+                }),
             ],
             content: SingleChildScrollView(
               child: Column(
@@ -169,10 +172,44 @@ class _CategoriesPageState extends State<CategoriesPage> {
         });
   }
 
+  _deleteFormDialog(BuildContext context, categoryId) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (param) {
+        return AlertDialog(
+          title: Text("Are you sure want to delete?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              style: TextButton.styleFrom(
+                  primary: Colors.grey),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+            TextButton(
+              child: Text("Delete"),
+              style: TextButton.styleFrom(
+                  primary: Colors.white, backgroundColor: Colors.red),
+              onPressed: () async {
+                var result = await _categoryService.deleteCategory(categoryId);
+
+                if (result > 0) {
+                  debugPrint("DELETE : " + result.toString());
+                  Navigator.pop(context);
+                  _showSnackBarMessage(Text("Category was deleted!"));
+                  getAllCategories();
+                }
+              }
+            ),
+          ],
+        );
+    });
+  }
+
   _showSnackBarMessage(message) {
     var snackBar = SnackBar(content: message);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
   }
 
   @override
@@ -188,30 +225,29 @@ class _CategoriesPageState extends State<CategoriesPage> {
           title: Text("Categories"),
         ),
         body: ListView.builder(
-          itemCount: _categoryList.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    _editCategory(context, _categoryList[index].id);
-                  }),
-                title: Row(children: <Widget>[
-                  Text(_categoryList[index].name.toString()),
-                  IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {})
-                ]),
-              ),
-            );
-          }),
+            itemCount: _categoryList.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  leading: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        _editCategory(context, _categoryList[index].id);
+                      }),
+                  title: Row(children: <Widget>[
+                    Text(_categoryList[index].name.toString()),
+                    IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () { _deleteFormDialog(context, _categoryList[index].id); })
+                  ]),
+                ),
+              );
+            }),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
             _addFormDialog(context);
-          }
-        )
+        })
     );
   }
 }

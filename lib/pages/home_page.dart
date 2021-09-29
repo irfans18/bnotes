@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:bnotes/helper/drawer_navigation.dart';
+import 'package:bnotes/pages/add_note_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +18,11 @@ class _HomePageState extends State<HomePage> {
         title: Text("DNotes - Home"),
       ),
       drawer: DrawerNavigation(),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
+        })
     );
   }
 }

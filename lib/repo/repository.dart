@@ -33,8 +33,13 @@ class Repository {
   }
   
   updateData(table, data) async {
-    debugPrint("REPO : ${data["id"]} ");
+    // debugPrint("REPO : ${data["id"]} ");
     var connection = await database;
     return connection.update(table, data, where: "id=?", whereArgs: [data["id"]]);
+  }
+
+  deleteData(table, itemId) async {
+    var connection = await database;
+    return connection.rawDelete("DELETE FROM $table WHERE id = $itemId");
   }
 }
