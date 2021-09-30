@@ -12,13 +12,15 @@ class AddNotePage extends StatefulWidget {
 }
 
 class _AddNotePageState extends State<AddNotePage> {
-  var _selectedItem;
+  late var _selectedItem;
   late List<String> _categoryList = [];
 
 
   var _titleController = TextEditingController();
   var _descriptionController = TextEditingController();
   var _dateController = TextEditingController();
+
+  DateTime _dateTime = DateTime.now();
 
   @override
   void initState() {
@@ -36,6 +38,22 @@ class _AddNotePageState extends State<AddNotePage> {
     });
   }
 
+  _selectedDate(BuildContext context) async {
+    var _pickDate = await showDatePicker(
+      context: context, 
+      initialDate: _dateTime, 
+      firstDate: DateTime(2000), 
+      lastDate: DateTime(2100)
+    );
+
+    if (_pickDate != null){
+      setState(() {
+        // _dateController.text = DateFormat("d MMMM yyyy").format(_pickDate);
+        _dateController.text = DateFormat("yyyy-MM-dd").format(_pickDate);
+        debugPrint(_pickDate.toString());
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +98,14 @@ class _AddNotePageState extends State<AddNotePage> {
             TextField(
               controller: _dateController,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.calendar_today),
+                // prefixIcon: Icon(Icons.calendar_today),
+                prefixIcon: InkWell(
+                  child: Icon(Icons.calendar_today),
+                  onTap: (){
+                    _selectedDate(context);
+                  }),
                 labelText: "Pick a date",
-                // hintText: "Write a title",
+                hintText: "YYYY-MM-DD",
               ),
             ),
             TextField(
