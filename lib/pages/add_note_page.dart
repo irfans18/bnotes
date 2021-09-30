@@ -1,9 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_final_fields
 
-import 'package:bnotes/models/category.dart';
+// import 'package:bnotes/models/category.dart';
 import 'package:bnotes/services/category_sevice.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:intl/intl.dart';
 
 class AddNotePage extends StatefulWidget {
   @override
@@ -12,28 +13,28 @@ class AddNotePage extends StatefulWidget {
 
 class _AddNotePageState extends State<AddNotePage> {
   var _selectedItem;
-  var _categoryList = ["Brazil", "Tunisia", "Test"];
+  late List<String> _categoryList = [];
 
-  var _categoryService = CategoryService();
 
   var _titleController = TextEditingController();
   var _descriptionController = TextEditingController();
   var _dateController = TextEditingController();
-  var _categoryController = TextEditingController();
 
-  // getAllCategories() async {
-  //   _categoryList.clear();
-  //   var categories = await _categoryService.readCategory();
-  //   categories.forEach((category) {
-  //     setState(() {
-  //       var categoryModel = Category();
-  //       categoryModel.name = category["name"];
-  //       categoryModel.description = category["description"];
-  //       categoryModel.id = category["id"];
-  //       _categoryList.add(categoryModel);
-  //     });
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _loadCategoryName();
+  }
+
+  _loadCategoryName() async {
+    var _categoryService = CategoryService();
+    var categories = await _categoryService.readCategory();
+    categories.forEach((category) {
+      // setState(() {
+        _categoryList.add(category["name"]);
+      // });
+    });
+  }
 
 
   @override
@@ -71,7 +72,6 @@ class _AddNotePageState extends State<AddNotePage> {
               dropdownSearchDecoration: InputDecoration(
                 disabledBorder: InputBorder.none,
                 prefixIcon:  Icon(Icons.view_list),
-                alignLabelWithHint: true
                 )
               // selectedItem: _selectedItem,
             ),
@@ -96,8 +96,9 @@ class _AddNotePageState extends State<AddNotePage> {
               ),
             ),
             ElevatedButton(
+              child: Text("Save"),
               onPressed: (){},
-              child: Text("Save"))
+              )
           ],
         ),
       ),
