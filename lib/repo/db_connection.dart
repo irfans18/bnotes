@@ -11,8 +11,13 @@ class DatabaseConnection {
   }
 
   _onCreatingDatabase(Database database, int version) async {
+    //categories table
     await database.execute(
       "CREATE TABLE categories (id INTEGER PRIMARY KEY, name TEXT, description TEXT)"
     );
+
+    //notes table
+    await database.execute(
+      "CREATE TABLE notes (id INTEGER PRIMARY KEY, title TEXT, description TEXT, category TEXT, date_time TEXT, is_finished INTEGER, is_private INTEGER)");
   }
 }

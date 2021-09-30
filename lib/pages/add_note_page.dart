@@ -1,7 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_final_fields
 
 // import 'package:bnotes/models/category.dart';
+import 'package:bnotes/models/note.dart';
+import 'package:bnotes/pages/home_page.dart';
 import 'package:bnotes/services/category_sevice.dart';
+import 'package:bnotes/services/note_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +17,9 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePageState extends State<AddNotePage> {
   late var _selectedItem;
   late List<String> _categoryList = [];
+
+  var _noteModel = Note();
+  var _noteService = NoteService();
 
 
   var _titleController = TextEditingController();
@@ -38,6 +44,19 @@ class _AddNotePageState extends State<AddNotePage> {
     });
   }
 
+  // _saveNote() async {
+  //   var noteModel = Note();
+  //   noteModel.title = _titleController.text;
+  //   noteModel.description = _descriptionController.text;
+  //   noteModel.category = _selectedItem;
+  //   noteModel.isFinished = 0;
+  //   noteModel.isPrivate = 1;
+
+  //   var _noteService = NoteService();
+  //   var result = await _noteService.saveNote(noteModel);
+  //   debugPrint(result+"FIRE!");
+  // }
+
   _selectedDate(BuildContext context) async {
     var _pickDate = await showDatePicker(
       context: context, 
@@ -54,6 +73,12 @@ class _AddNotePageState extends State<AddNotePage> {
       });
     }
   }
+
+  _showSnackBarMessage(message) {
+    var snackBar = SnackBar(content: message);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +145,28 @@ class _AddNotePageState extends State<AddNotePage> {
             ),
             ElevatedButton(
               child: Text("Save"),
-              onPressed: (){},
+              onPressed: () async{
+                //  _saveNote();
+                debugPrint(_titleController.text+"FIRE!");
+                debugPrint(_descriptionController.text+"FIRE!");
+                debugPrint(_selectedItem+"FIRE!");
+                _noteModel.title = _titleController.text;
+                _noteModel.description = _descriptionController.text;
+                _noteModel.category = _selectedItem.toString();
+                _noteModel.isFinished = 0;
+                _noteModel.isPrivate = 1;
+                debugPrint(_noteModel.isFinished.toString() + "FIRE!");
+                debugPrint(_noteModel.isPrivate.toString() + "FIRE!");
+
+                var result = await _noteService.saveNote(_noteModel);
+                
+                if (result > 0){
+                  Navigator.of(context).pop();
+                  _showSnackBarMessage("Created successfully!");
+
+                }
+                
+              },
               )
           ],
         ),
