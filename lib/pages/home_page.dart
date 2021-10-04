@@ -34,12 +34,16 @@ class _HomePageState extends State<HomePage> {
         var noteModel = Note();
         noteModel.title = note["title"];
         noteModel.description = note["description"];
+        noteModel.dateTime = note["date_time"];
         noteModel.category = note["category"];
         noteModel.isFinished = note["is_finished"];
         noteModel.isPrivate = note["is_private"];
         _noteList.add(noteModel);
       });
     });
+
+    debugPrint("TEST!!"+ _noteList[0].id.toString());
+    debugPrint("TEST!!"+ _noteList[0].dateTime.toString());
   }
 
 
@@ -47,35 +51,38 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("DNotes - Home"),
+        title: Text("Notes - Home"),
       ),
       drawer: DrawerNavigation(),
-      body: ListView.builder(
-            itemCount: _noteList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  leading: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // _editCategory(context, _categoryList[index].id);
-                      }),
-                  title: Row(children: <Widget>[
-                    Text(_noteList[index].title.toString()),
-                    IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () { 
-                          // _deleteFormDialog(context, _categoryList[index].id); 
-                        }
-                    )
-                  ]),
-                ),
-              );
-            }),
+      body: Container(
+        child: StaggeredGridView.countBuilder(
+          crossAxisCount: 2,
+          itemCount: _noteList.length, 
+          itemBuilder: (context, index){
+            return Card(
+              elevation: 5,
+              child: ListTile(
+                title: Text(_noteList[index].title.toString()),
+                subtitle: Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                  Text(_noteList[index].dateTime.toString(), textAlign: TextAlign.start),
+                  SizedBox(height: 5),
+                  Text(_noteList[index].description.toString(), textAlign: TextAlign.start),
+                ]),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+            );
+          }, 
+          staggeredTileBuilder: (index){
+            return StaggeredTile.count(1, index.isEven ? 1.2 : 1.5);
+          }),
+      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
+          onPressed: () async{
+            await Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
             getAllNotes();
         })
     );

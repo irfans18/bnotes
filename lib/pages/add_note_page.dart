@@ -2,7 +2,6 @@
 
 // import 'package:bnotes/models/category.dart';
 import 'package:bnotes/models/note.dart';
-import 'package:bnotes/pages/home_page.dart';
 import 'package:bnotes/services/category_sevice.dart';
 import 'package:bnotes/services/note_service.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +56,7 @@ class _AddNotePageState extends State<AddNotePage> {
   //   debugPrint(result+"FIRE!");
   // }
 
-  _selectedDate(BuildContext context) async {
+  _selectDate(BuildContext context) async {
     var _pickDate = await showDatePicker(
       context: context, 
       initialDate: _dateTime, 
@@ -129,7 +128,7 @@ class _AddNotePageState extends State<AddNotePage> {
                 hintText: "YYYY-MM-DD",
               ),
               onTap: (){
-                _selectedDate(context);
+                _selectDate(context);
               },
             ),
             TextField(
@@ -148,11 +147,12 @@ class _AddNotePageState extends State<AddNotePage> {
                 _noteModel.title = _titleController.text;
                 _noteModel.description = _descriptionController.text;
                 _noteModel.category = _selectedItem.toString();
+                _noteModel.dateTime = _dateController.text; 
                 _noteModel.isFinished = 0;
                 _noteModel.isPrivate = 1;
                 //  _saveNote();
-                // debugPrint(_titleController.text+"FIRE!");
-                // debugPrint(_descriptionController.text+"FIRE!");
+                debugPrint(_titleController.text+"FIRE!");
+                debugPrint(_noteModel.dateTime.toString() +"FIRE!");
                 // debugPrint(_selectedItem+"FIRE!");
                 // debugPrint(_noteModel.isFinished.toString() + "FIRE!");
                 // debugPrint(_noteModel.isPrivate.toString() + "FIRE!");
@@ -160,7 +160,7 @@ class _AddNotePageState extends State<AddNotePage> {
                 var result = await _noteService.saveNote(_noteModel);
                 
                 if (result > 0){
-                  _showSnackBarMessage("Created successfully!");
+                  _showSnackBarMessage(Text("Created successfully!"));
                   await Future.delayed(Duration(seconds: 1));
                   Navigator.of(context).pop();
                 }
