@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
     noteService.forEach((note) {
       setState(() {
         var noteModel = Note();
+        noteModel.id = note["id"];
         noteModel.title = note["title"];
         noteModel.description = note["description"];
         noteModel.dateTime = note["date_time"];
@@ -41,11 +42,46 @@ class _HomePageState extends State<HomePage> {
         _noteList.add(noteModel);
       });
     });
-
-    debugPrint("TEST!!"+ _noteList[0].id.toString());
-    debugPrint("TEST!!"+ _noteList[0].dateTime.toString());
   }
 
+  _showSnackBarMessage(message) {
+    var snackBar = SnackBar(content: message);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  _deleteFormDialog(BuildContext context, noteId) {
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (param) {
+          return AlertDialog(
+            title: Text("Are you sure want to delete?"),
+            actions: <Widget>[
+              TextButton(
+                  child: Text("Cancel"),
+                  style: TextButton.styleFrom(primary: Colors.grey),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              TextButton(
+                  child: Text("Delete"),
+                  style: TextButton.styleFrom(
+                      primary: Colors.white, backgroundColor: Colors.red),
+                  onPressed: () async {
+                    var result =
+                        await _noteService.deleteNote(noteId);
+
+                    if (result > 0) {
+                      debugPrint("DELETE : " + result.toString());
+                      Navigator.pop(context);
+                      _showSnackBarMessage(Text("Note has deleted!"));
+                      getAllNotes();
+                    }
+                  }),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +98,9 @@ class _HomePageState extends State<HomePage> {
             return Card(
               elevation: 5,
               child: ListTile(
+                onLongPress: (){ 
+                  _deleteFormDialog(context, _noteList[index].id);
+                debugPrint(_noteList[index].id.toString()); },
                 title: Text(_noteList[index].title.toString()),
                 subtitle: Column(
                   // mainAxisAlignment: MainAxisAlignment.start,

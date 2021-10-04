@@ -25,8 +25,8 @@ class NoteService {
   //   return await _repository.updateData("categories", category.categoryMap());
   // }
 
-  // deleteCategory(categoryId) async {
-  //   // debugPrint("CS : ${category.categoryMap()} ");
-  //   return await _repository.deleteData("categories", categoryId);
-  // }
+  deleteNote(noteId) async {
+    // debugPrint("CS : ${category.categoryMap()} ");
+    return await _repository.deleteData("notes", noteId);
+  }
 }
