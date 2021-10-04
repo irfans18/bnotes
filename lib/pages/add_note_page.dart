@@ -124,14 +124,13 @@ class _AddNotePageState extends State<AddNotePage> {
               controller: _dateController,
               decoration: InputDecoration(
                 // prefixIcon: Icon(Icons.calendar_today),
-                prefixIcon: InkWell(
-                  child: Icon(Icons.calendar_today),
-                  onTap: (){
-                    _selectedDate(context);
-                  }),
+                prefixIcon: Icon(Icons.calendar_today),
                 labelText: "Pick a date",
                 hintText: "YYYY-MM-DD",
               ),
+              onTap: (){
+                _selectedDate(context);
+              },
             ),
             TextField(
               controller: _descriptionController,
@@ -146,24 +145,24 @@ class _AddNotePageState extends State<AddNotePage> {
             ElevatedButton(
               child: Text("Save"),
               onPressed: () async{
-                //  _saveNote();
-                debugPrint(_titleController.text+"FIRE!");
-                debugPrint(_descriptionController.text+"FIRE!");
-                debugPrint(_selectedItem+"FIRE!");
                 _noteModel.title = _titleController.text;
                 _noteModel.description = _descriptionController.text;
                 _noteModel.category = _selectedItem.toString();
                 _noteModel.isFinished = 0;
                 _noteModel.isPrivate = 1;
-                debugPrint(_noteModel.isFinished.toString() + "FIRE!");
-                debugPrint(_noteModel.isPrivate.toString() + "FIRE!");
+                //  _saveNote();
+                // debugPrint(_titleController.text+"FIRE!");
+                // debugPrint(_descriptionController.text+"FIRE!");
+                // debugPrint(_selectedItem+"FIRE!");
+                // debugPrint(_noteModel.isFinished.toString() + "FIRE!");
+                // debugPrint(_noteModel.isPrivate.toString() + "FIRE!");
 
                 var result = await _noteService.saveNote(_noteModel);
                 
                 if (result > 0){
-                  Navigator.of(context).pop();
                   _showSnackBarMessage("Created successfully!");
-
+                  await Future.delayed(Duration(seconds: 1));
+                  Navigator.of(context).pop();
                 }
                 
               },

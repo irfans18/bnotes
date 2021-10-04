@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import 'package:bnotes/helper/drawer_navigation.dart';
 import 'package:bnotes/models/note.dart';
 import 'package:bnotes/pages/add_note_page.dart';
 import 'package:bnotes/services/note_service.dart';
-import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -40,10 +42,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _showSnackBarMessage(message) {
-    var snackBar = SnackBar(content: message);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +77,6 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
             getAllNotes();
-            _showSnackBarMessage("Note Created successfully!");
-
-
         })
     );
   }
