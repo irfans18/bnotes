@@ -3,6 +3,7 @@
 import 'package:bnotes/models/category.dart';
 import 'package:bnotes/pages/home_page.dart';
 import 'package:bnotes/services/category_sevice.dart';
+import 'package:bnotes/widget/form_dialog.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -11,19 +12,11 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  var _addCategoryNameController = TextEditingController();
-  var _addCategoryDescriptionController = TextEditingController();
-  var _editCategoryNameController = TextEditingController();
-  var _editCategoryDescriptionController = TextEditingController();
-
-  var _category = Category();
   var _categoryService = CategoryService();
 
-  List<Category> _categoryList = [];
+  final List<Category> _categoryList = [];
 
   var category;
-
-  // final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -50,113 +43,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
         context: context,
         barrierDismissible: true,
         builder: (param) {
-          return AlertDialog(
-            title: Text("Add Category"),
-            actions: <Widget>[
-              TextButton(
-                  child: Text("Cancel"),
-                  style: TextButton.styleFrom(primary: Colors.grey),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: Text("Save"),
-                  style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.blue),
-                  onPressed: () async {
-                    
-                    var result = await _saveCategory();
-                    if (result > 0) {
-                      // debugPrint(result);
-                      Navigator.pop(context);
-                      getAllCategories();
-                    }
-                  }),
-            ],
-            content: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    controller: _addCategoryNameController,
-                    decoration: InputDecoration(
-                      hintText: "Write a category",
-                      labelText: "Category",
-                    ),
-                  ),
-                  TextField(
-                    controller: _addCategoryDescriptionController,
-                    decoration: InputDecoration(
-                      hintText: "Write a description",
-                      labelText: "Description",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return FormDialog(isEdit: false);
         });
   }
 
-  _editCategory(BuildContext context, categoryId) async {
-    category = await _categoryService.readCategoryById(categoryId);
-    setState(() {
-      _editCategoryNameController.text = category[0]["name"] ?? "No Name";
-      _editCategoryDescriptionController.text =
-          category[0]["description"] ?? "No Description";
-    });
-    _editFormDialog(context);
-  }
-
-  _editFormDialog(BuildContext context) {
+  _editFormDialog(BuildContext context, categoryId) {
     return showDialog(
         context: context,
         barrierDismissible: true,
         builder: (param) {
-          return AlertDialog(
-            title: Text("Edit Category"),
-            actions: <Widget>[
-              TextButton(
-                  child: Text("Cancel"),
-                  style: TextButton.styleFrom(primary: Colors.grey),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: Text("Update"),
-                  style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.blue),
-                  onPressed: () async {
-                    var result = await _updateCategory();
-
-                    if (result > 0) {
-                      //   debugPrint(result);
-                      Navigator.pop(context);
-                      _showSnackBarMessage(Text("Category was updated!"));
-                      getAllCategories();
-                    }
-                  }),
-            ],
-            content: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    controller: _editCategoryNameController,
-                    decoration: InputDecoration(
-                      hintText: "Write a category",
-                      labelText: "Category",
-                    ),
-                  ),
-                  TextField(
-                    controller: _editCategoryDescriptionController,
-                    decoration: InputDecoration(
-                      hintText: "Write a description",
-                      labelText: "Description",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return FormDialog(isEdit: true, id: categoryId);
         });
   }
 
@@ -199,20 +95,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  _saveCategory() {
-    _category.name = _addCategoryNameController.text.toString();
-    _category.description = _addCategoryDescriptionController.text.toString();
-
-    return _categoryService.saveCategory(_category);
-  }
-
-  _updateCategory(){
-  _category.id = category[0]["id"];
-  _category.name = _editCategoryNameController.text;
-  _category.description = _editCategoryDescriptionController.text;
-
-  return _categoryService.updateCategory(_category);
- }
 
   @override
   Widget build(BuildContext context) {
@@ -234,8 +116,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
               child: ListTile(
                 leading: IconButton(
                     icon: Icon(Icons.edit),
-                    onPressed: () {
-                      _editCategory(context, _categoryList[index].id);
+                    onPressed: () async {
+                      await _editFormDialog(context, _categoryList[index].id);
+                      getAllCategories();
                     }),
                 title: Row(children: <Widget>[
                   Text(_categoryList[index].name.toString()),
@@ -250,8 +133,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
       }),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () {
+          onPressed: () async{
             _addFormDialog(context);
+            getAllCategories();
       })
     );
   }
