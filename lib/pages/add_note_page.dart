@@ -65,6 +65,16 @@ class _AddNotePageState extends State<AddNotePage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  _saveNote(){
+    _noteModel.title = _titleController.text;
+    _noteModel.description = _descriptionController.text;
+    _noteModel.category = _selectedItem.toString();
+    _noteModel.dateTime = _dateController.text; 
+    _noteModel.isFinished = 0;
+    _noteModel.isPrivate = 1;
+
+    return _noteService.saveNote(_noteModel);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +141,7 @@ class _AddNotePageState extends State<AddNotePage> {
             ElevatedButton(
               child: Text("Save"),
               onPressed: () async{
-                _noteModel.title = _titleController.text;
-                _noteModel.description = _descriptionController.text;
-                _noteModel.category = _selectedItem.toString();
-                _noteModel.dateTime = _dateController.text; 
-                _noteModel.isFinished = 0;
-                _noteModel.isPrivate = 1;
-
-                var result = await _noteService.saveNote(_noteModel);
+                var result = await _saveNote();
                 
                 if (result > 0){
                   _showSnackBarMessage(Text("Created successfully!"));

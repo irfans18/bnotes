@@ -45,16 +45,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
   }
 
-  _editCategory(BuildContext context, categoryId) async {
-    category = await _categoryService.readCategoryById(categoryId);
-    setState(() {
-      _editCategoryNameController.text = category[0]["name"] ?? "No Name";
-      _editCategoryDescriptionController.text =
-          category[0]["description"] ?? "No Description";
-    });
-    _editFormDialog(context);
-  }
-
   _addFormDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -74,11 +64,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   style: TextButton.styleFrom(
                       primary: Colors.white, backgroundColor: Colors.blue),
                   onPressed: () async {
-                    _category.name = _addCategoryNameController.text.toString();
-                    _category.description =
-                        _addCategoryDescriptionController.text.toString();
-
-                    var result = await _categoryService.saveCategory(_category);
+                    
+                    var result = await _saveCategory();
                     if (result > 0) {
                       // debugPrint(result);
                       Navigator.pop(context);
@@ -110,6 +97,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
         });
   }
 
+  _editCategory(BuildContext context, categoryId) async {
+    category = await _categoryService.readCategoryById(categoryId);
+    setState(() {
+      _editCategoryNameController.text = category[0]["name"] ?? "No Name";
+      _editCategoryDescriptionController.text =
+          category[0]["description"] ?? "No Description";
+    });
+    _editFormDialog(context);
+  }
+
   _editFormDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -129,16 +126,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   style: TextButton.styleFrom(
                       primary: Colors.white, backgroundColor: Colors.blue),
                   onPressed: () async {
-                    // debugPrint("TEST");
-                    _category.id = category[0]["id"];
-                    _category.name =
-                        _editCategoryNameController.text.toString();
-                    _category.description =
-                        _editCategoryDescriptionController.text.toString();
-                    // debugPrint(_category.id.toString());
-
-                    var result =
-                        await _categoryService.updateCategory(_category);
+                    var result = await _updateCategory();
 
                     if (result > 0) {
                       //   debugPrint(result);
@@ -211,6 +199,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  _saveCategory() {
+    _category.name = _addCategoryNameController.text.toString();
+    _category.description = _addCategoryDescriptionController.text.toString();
+
+    return _categoryService.saveCategory(_category);
+  }
+
+  _updateCategory(){
+  _category.id = category[0]["id"];
+  _category.name = _editCategoryNameController.text;
+  _category.description = _editCategoryDescriptionController.text;
+
+  return _categoryService.updateCategory(_category);
+ }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -253,3 +256,5 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 }
+
+

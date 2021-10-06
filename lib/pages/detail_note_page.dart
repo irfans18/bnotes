@@ -72,7 +72,6 @@ class _DetailNotePageState extends State<DetailNotePage> {
         });
   }
 
-
   _choiceAction(String choice){
     debugPrint(choice);
     if (choice == "Delete") _deleteFormDialog(context, _noteModel.id);
