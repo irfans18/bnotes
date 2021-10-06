@@ -43,19 +43,6 @@ class _AddNotePageState extends State<AddNotePage> {
     });
   }
 
-  // _saveNote() async {
-  //   var noteModel = Note();
-  //   noteModel.title = _titleController.text;
-  //   noteModel.description = _descriptionController.text;
-  //   noteModel.category = _selectedItem;
-  //   noteModel.isFinished = 0;
-  //   noteModel.isPrivate = 1;
-
-  //   var _noteService = NoteService();
-  //   var result = await _noteService.saveNote(noteModel);
-  //   debugPrint(result+"FIRE!");
-  // }
-
   _selectDate(BuildContext context) async {
     var _pickDate = await showDatePicker(
       context: context, 
@@ -150,12 +137,6 @@ class _AddNotePageState extends State<AddNotePage> {
                 _noteModel.dateTime = _dateController.text; 
                 _noteModel.isFinished = 0;
                 _noteModel.isPrivate = 1;
-                //  _saveNote();
-                debugPrint(_titleController.text+"FIRE!");
-                debugPrint(_noteModel.dateTime.toString() +"FIRE!");
-                // debugPrint(_selectedItem+"FIRE!");
-                // debugPrint(_noteModel.isFinished.toString() + "FIRE!");
-                // debugPrint(_noteModel.isPrivate.toString() + "FIRE!");
 
                 var result = await _noteService.saveNote(_noteModel);
                 

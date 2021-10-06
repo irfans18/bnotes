@@ -1,5 +1,6 @@
 import 'package:bnotes/models/note.dart';
 import 'package:bnotes/repo/repository.dart';
+import 'package:flutter/services.dart';
 
 class NoteService {
   late Repository _repository;
@@ -16,9 +17,9 @@ class NoteService {
     return await _repository.readData("notes");
   }
 
-  // readCategoryById(categoryId) async {
-  //   return await _repository.readDataById("categories", categoryId);
-  // }
+  readNoteById(noteId) async {
+    return await _repository.readDataById("notes", noteId);
+  }
 
   // updateCategory(Category category) async {
   //   // debugPrint("CS : ${category.categoryMap()} ");
@@ -28,5 +29,14 @@ class NoteService {
   deleteNote(noteId) async {
     // debugPrint("CS : ${category.categoryMap()} ");
     return await _repository.deleteData("notes", noteId);
+  }
+
+  copyNoteDescription(message){
+    Clipboard.setData(ClipboardData(text: message.toString()));
+  }
+  
+  copyNoteDetail(title, date, desc){
+    Clipboard.setData(ClipboardData(
+      text: " ${title.toString()} \n ${date.toString()} \n ${desc.toString()}"));
   }
 }

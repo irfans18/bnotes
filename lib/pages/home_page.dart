@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:bnotes/pages/detail_note_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -16,8 +17,8 @@ class HomePage extends StatefulWidget {
 }
 class _HomePageState extends State<HomePage> {
 
-    List<Note> _noteList = [];
-    var _noteService = NoteService();
+    late List<Note> _noteList;
+    final _noteService = NoteService();
 
 
   @override
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getAllNotes() async {
-    _noteList.clear();
+    _noteList = [];
     var noteService = await _noteService.readNote();
     noteService.forEach((note) {
       setState(() {
@@ -36,9 +37,9 @@ class _HomePageState extends State<HomePage> {
         noteModel.title = note["title"];
         noteModel.description = note["description"];
         noteModel.dateTime = note["date_time"];
-        noteModel.category = note["category"];
-        noteModel.isFinished = note["is_finished"];
-        noteModel.isPrivate = note["is_private"];
+        // noteModel.category = note["category"];
+        // noteModel.isFinished = note["is_finished"];
+        // noteModel.isPrivate = note["is_private"];
         _noteList.add(noteModel);
       });
     });
@@ -49,40 +50,7 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  _deleteFormDialog(BuildContext context, noteId) {
-    return showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (param) {
-          return AlertDialog(
-            title: Text("Are you sure want to delete?"),
-            actions: <Widget>[
-              TextButton(
-                  child: Text("Cancel"),
-                  style: TextButton.styleFrom(primary: Colors.grey),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: Text("Delete"),
-                  style: TextButton.styleFrom(
-                      primary: Colors.white, backgroundColor: Colors.red),
-                  onPressed: () async {
-                    var result =
-                        await _noteService.deleteNote(noteId);
-
-                    if (result > 0) {
-                      debugPrint("DELETE : " + result.toString());
-                      Navigator.pop(context);
-                      _showSnackBarMessage(Text("Note has deleted!"));
-                      getAllNotes();
-                    }
-                  }),
-            ],
-          );
-        });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +58,8 @@ class _HomePageState extends State<HomePage> {
         title: Text("Notes - Home"),
       ),
       drawer: DrawerNavigation(),
-      body: Container(
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(0,0,0,10),
         child: StaggeredGridView.countBuilder(
           crossAxisCount: 2,
           itemCount: _noteList.length, 
@@ -98,8 +67,13 @@ class _HomePageState extends State<HomePage> {
             return Card(
               elevation: 5,
               child: ListTile(
-                onLongPress: (){ 
-                  _deleteFormDialog(context, _noteList[index].id);
+                onTap: () async{
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DetailNotePage(id: _noteList[index].id)));
+                  getAllNotes();
+                },
+                onLongPress: (){
+                  _noteService.copyNoteDescription(_noteList[index].description.toString()); 
+                  _showSnackBarMessage(Text("Copied succesfully"));
                 debugPrint(_noteList[index].id.toString()); },
                 title: Text(_noteList[index].title.toString()),
                 subtitle: Column(
@@ -108,8 +82,12 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                   Text(_noteList[index].dateTime.toString(), textAlign: TextAlign.start),
                   SizedBox(height: 5),
-                  Text(_noteList[index].description.toString(), textAlign: TextAlign.start),
+                  Text(_noteList[index].description.toString(), 
+                    textAlign: TextAlign.start,
+                    maxLines: 10,
+                    overflow: TextOverflow.ellipsis,),
                 ]),
+                isThreeLine: true,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
             );
@@ -123,7 +101,8 @@ class _HomePageState extends State<HomePage> {
           onPressed: () async{
             await Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
             getAllNotes();
-        })
+        }),
+    // resizeToAvoidBottomInset: false
     );
   }
 }
