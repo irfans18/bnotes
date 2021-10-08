@@ -2,16 +2,16 @@ import 'package:bnotes/models/category.dart';
 import 'package:bnotes/services/category_sevice.dart';
 import 'package:flutter/material.dart';
 
-class FormDialog extends StatefulWidget {
+class FormDialogCategory extends StatefulWidget {
   final bool isEdit;
   final int? id;
-  const FormDialog({Key? key, required this.isEdit, this.id}) : super(key: key);
+  const FormDialogCategory({Key? key, required this.isEdit, this.id}) : super(key: key);
 
   @override
-  State<FormDialog> createState() => _FormDialogState();
+  State<FormDialogCategory> createState() => _FormDialogCategoryState();
 }
 
-class _FormDialogState extends State<FormDialog> {
+class _FormDialogCategoryState extends State<FormDialogCategory> {
   final _editCategoryNameController = TextEditingController();
 
   final _editCategoryDescriptionController = TextEditingController();
@@ -20,8 +20,6 @@ class _FormDialogState extends State<FormDialog> {
 
   final _categoryService = CategoryService();
 
-  var category;
-
   @override
   initState(){
     if (widget.isEdit) _editCategory(context, widget.id);
@@ -29,7 +27,7 @@ class _FormDialogState extends State<FormDialog> {
   }
 
   _editCategory(BuildContext context, categoryId) async {
-    category = await _categoryService.readCategoryById(categoryId);
+    var category = await _categoryService.readCategoryById(categoryId);
     _editCategoryNameController.text = category[0]["name"] ?? "No Name";
     _editCategoryDescriptionController.text = category[0]["description"] ?? "No Description";
   }

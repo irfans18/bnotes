@@ -1,12 +1,14 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_final_fields, prefer_typing_uninitialized_variables, prefer_const_constructors
+// ignore_for_file: prefer_final_fields, prefer_typing_uninitialized_variables, prefer_const_constructors
 
 import 'package:bnotes/models/category.dart';
 import 'package:bnotes/pages/home_page.dart';
 import 'package:bnotes/services/category_sevice.dart';
-import 'package:bnotes/widget/form_dialog.dart';
+import 'package:bnotes/widget/form_dialog_category.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesPage extends StatefulWidget {
+  const CategoriesPage({Key? key}) : super(key: key);
+
   @override
   _CategoriesPageState createState() => _CategoriesPageState();
 }
@@ -20,8 +22,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   void initState() {
-    super.initState();
     getAllCategories();
+    super.initState();
   }
 
   getAllCategories() async {
@@ -43,7 +45,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         context: context,
         barrierDismissible: true,
         builder: (param) {
-          return FormDialog(isEdit: false);
+          return FormDialogCategory(isEdit: false);
         });
   }
 
@@ -52,7 +54,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         context: context,
         barrierDismissible: true,
         builder: (param) {
-          return FormDialog(isEdit: true, id: categoryId);
+          return FormDialogCategory(isEdit: true, id: categoryId);
         });
   }
 
@@ -99,7 +101,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // key: _globalKey,
       appBar: AppBar(
         leading: TextButton(
             child: Icon(Icons.arrow_back, color: Colors.white),

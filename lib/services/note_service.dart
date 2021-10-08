@@ -21,10 +21,10 @@ class NoteService {
     return await _repository.readDataById("notes", noteId);
   }
 
-  // updateCategory(Category category) async {
-  //   // debugPrint("CS : ${category.categoryMap()} ");
-  //   return await _repository.updateData("categories", category.categoryMap());
-  // }
+  updateNote(Note note) async {
+    // debugPrint("CS : ${category.categoryMap()} ");
+    return await _repository.updateData("notes", note.noteMap());
+  }
 
   deleteNote(noteId) async {
     // debugPrint("CS : ${category.categoryMap()} ");

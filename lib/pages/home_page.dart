@@ -6,20 +6,19 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:bnotes/helper/drawer_navigation.dart';
 import 'package:bnotes/models/note.dart';
-import 'package:bnotes/pages/add_note_page.dart';
+import 'package:bnotes/pages/cu_note_page.dart';
 import 'package:bnotes/services/note_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({ Key? key }) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
+
 class _HomePageState extends State<HomePage> {
-
-    late List<Note> _noteList;
-    final _noteService = NoteService();
-
+  late List<Note> _noteList;
+  final _noteService = NoteService();
 
   @override
   void initState() {
@@ -50,7 +49,6 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,50 +57,62 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: DrawerNavigation(),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(0,0,0,10),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         child: StaggeredGridView.countBuilder(
-          crossAxisCount: 2,
-          itemCount: _noteList.length, 
-          itemBuilder: (context, index){
-            return Card(
-              elevation: 5,
-              child: ListTile(
-                onTap: () async{
-                  await Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DetailNotePage(id: _noteList[index].id)));
-                  getAllNotes();
-                },
-                onLongPress: (){
-                  _noteService.copyNoteDescription(_noteList[index].description.toString()); 
-                  _showSnackBarMessage(Text("Copied succesfully"));
-                debugPrint(_noteList[index].id.toString()); },
-                title: Text(_noteList[index].title.toString()),
-                subtitle: Column(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                  Text(_noteList[index].dateTime.toString(), textAlign: TextAlign.start),
-                  SizedBox(height: 5),
-                  Text(_noteList[index].description.toString(), 
-                    textAlign: TextAlign.start,
-                    maxLines: 10,
-                    overflow: TextOverflow.ellipsis,),
-                ]),
-                isThreeLine: true,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-            );
-          }, 
-          staggeredTileBuilder: (index){
-            return StaggeredTile.count(1, index.isEven ? 1.2 : 1.5);
-          }),
+            crossAxisCount: 2,
+            itemCount: _noteList.length,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 5,
+                child: ListTile(
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            DetailNotePage(id: _noteList[index].id)));
+                    getAllNotes();
+                  },
+                  onLongPress: () {
+                    _noteService.copyNoteDescription(
+                        _noteList[index].description.toString());
+                    _showSnackBarMessage(Text("Copied succesfully"));
+                    debugPrint(_noteList[index].id.toString());
+                  },
+                  title: Text(_noteList[index].title.toString()),
+                  subtitle: Column(
+                      // mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(_noteList[index].dateTime.toString(),
+                            textAlign: TextAlign.start),
+                        SizedBox(height: 5),
+                        Text(
+                          _noteList[index].description.toString(),
+                          textAlign: TextAlign.start,
+                          maxLines: 10,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ]),
+                  isThreeLine: true,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              );
+            },
+            staggeredTileBuilder: (index) {
+              return StaggeredTile.count(1, index.isEven ? 1.2 : 1.5);
+            }),
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AddNotePage()));
+          onPressed: () async {
+            await Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CreateUpdateNotePage(
+                      isEdit: false,
+                  )
+                ));
             getAllNotes();
-        }),
-    // resizeToAvoidBottomInset: false
+          }),
+      // resizeToAvoidBottomInset: false
     );
   }
 }

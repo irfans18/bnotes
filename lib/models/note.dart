@@ -13,7 +13,7 @@ class Note {
     mapping["id"] = id;
     mapping["title"] = title;
     mapping["description"] = description;
-    mapping["category"] = description;
+    mapping["category"] = category;
     mapping["date_time"] = dateTime;
     mapping["is_finished"] = isFinished;
     mapping["is_private"] = isPrivate;
